@@ -1,0 +1,3 @@
+<FilesMatch "^biobrick$">
+    ForceType application/x-httpd-php
+</FilesMatch>

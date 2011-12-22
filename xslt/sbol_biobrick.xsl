@@ -5,22 +5,17 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 xmlns:s="http://sbols.org/v1#"
 xmlns:pr="http://partsregistry.org/"
-xmlns:prt="http://partsregistry.org/type/"
 xmlns:prp="http://partsregistry.org/part/"
 xmlns:pra="http://partsregistry.org/anot/"
 xmlns:prs="http://partsregistry.org/seq/"
 xmlns:prf="http://partsregistry.org/feat/"
 >
-<xsl:param name="prt" select="'http://partsregistry.org/type/'"/>
 <xsl:param name="prp" select="'http://partsregistry.org/part/'"/>
 <xsl:param name="pra" select="'http://partsregistry.org/anot/'"/>
 <xsl:param name="prs" select="'http://partsregistry.org/seq/'"/>
 <xsl:param name="prf" select="'http://partsregistry.org/feat/'"/>
-<!-- prt is the Partsregistry type
-     prd is the Partsregistry data
-
-prt and prd could potentially be resolvable at these urls
-xmlns:prt="http://partsregistry.org/cgi/partsdb/pgroup.cgi?pgroup="
+<!-- prp is the Partsregistry Part URI
+prp could potentially be resolvable at this url
 xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 -->
 
@@ -47,6 +42,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
       <s:description>
         <xsl:value-of select="normalize-space(part_short_desc)"/>
           </s:description>
+          
           <rdf:type rdf:resource="{concat($prt,translate(part_type,$uc,$lc))}"/>
           <!-- 
           <xsl:value-of select="part_status"/>

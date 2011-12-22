@@ -3,9 +3,10 @@
 <xsl:stylesheet version="1.0"
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 xmlns:s="http://sbols.org/v1#"
 xmlns:so="http://purl.obolibrary.org/obo/"
-xmlns:map="SO.RSBPML.mapping.uri"
+xmlns:map="http://convert.sbols.org/xml/"
 xmlns:pr="http://partsregistry.org/"
 xmlns:prt="http://partsregistry.org/type/"
 xmlns:prp="http://partsregistry.org/part/"
@@ -29,6 +30,8 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
 <xsl:key name="parts" match="subpart" use="part_name"/>
+
+<!-- This section performs the type mapping -->
 <map:typelist>
   <entry><rsbpml>cds</rsbpml><so>SO_0000316</so></entry>
   <entry><rsbpml>coding</rsbpml><so>SO_0000316</so></entry>
@@ -73,6 +76,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:call-template name="type"/>
 </xsl:template>
 
+
 <xsl:template match="/">
 <rdf:RDF>
 
@@ -81,15 +85,15 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
       <s:displayId><xsl:value-of select="part_name"/></s:displayId>
         <xsl:choose>
           <xsl:when test="normalize-space(part_nickname)">
-            <s:name><xsl:value-of select="part_nickname"/></s:name>
+            <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
           </xsl:when>
           <xsl:otherwise>
-            <s:name><xsl:value-of select="part_short_name"/></s:name>
+            <rdfs:label><xsl:value-of select="part_short_name"/></rdfs:label>
           </xsl:otherwise>
         </xsl:choose>
-      <s:description>
+      <rdfs:comment>
         <xsl:value-of select="normalize-space(part_short_desc)"/>
-          </s:description>
+          </rdfs:comment>
           <xsl:apply-templates select="part_type"/>
           <!-- 
           <xsl:value-of select="part_status"/>
@@ -123,10 +127,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <s:displayId><xsl:value-of select="part_name"/></s:displayId>
                 <xsl:choose>
                   <xsl:when test="normalize-space(part_nickname)">
-                     <s:name><xsl:value-of select="part_nickname"/></s:name>
+                     <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
                   </xsl:when>
                 </xsl:choose>
-                <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
+                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
                 <xsl:apply-templates select="part_type"/>
          </s:DnaComponent> 
             </s:subComponent>
@@ -147,10 +151,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <s:displayId><xsl:value-of select="part_name"/></s:displayId>
                 <xsl:choose>
                   <xsl:when test="normalize-space(part_nickname)">
-                  <s:name><xsl:value-of select="part_nickname"/></s:name>
+                  <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
                   </xsl:when>
                 </xsl:choose>
-                <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
+                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
                 <xsl:apply-templates select="part_type"/>
               </s:DnaComponent> 
             </s:subComponent>
@@ -171,10 +175,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <s:displayId><xsl:value-of select="part_name"/></s:displayId>
                 <xsl:choose>
                   <xsl:when test="normalize-space(part_nickname)">
-                  <s:name><xsl:value-of select="part_nickname"/></s:name>
+                  <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
                   </xsl:when>
                 </xsl:choose>
-                <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
+                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
                 <xsl:apply-templates select="scar_type"/>
          </s:DnaComponent> 
             </s:subComponent>
@@ -193,14 +197,14 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <s:displayId><xsl:value-of select="concat('RFC_',scar_standard)"/></s:displayId>
                 <xsl:choose>
                   <xsl:when test="normalize-space(scar_nickname)">
-                  <s:name><xsl:value-of select="scar_nickname"/></s:name>
+                  <rdfs:label><xsl:value-of select="scar_nickname"/></rdfs:label>
                   </xsl:when>
                   <xsl:otherwise>
-                  <s:name><xsl:value-of select="scar_name"/></s:name>
+                  <rdfs:label><xsl:value-of select="scar_name"/></rdfs:label>
                   </xsl:otherwise>
                 </xsl:choose>
                 <xsl:if test="normalize-space(scar_comments)">
-                  <s:description><xsl:value-of select="normalize-space(scar_comments)"/></s:description>
+                  <rdfs:comment><xsl:value-of select="normalize-space(scar_comments)"/></rdfs:comment>
                 </xsl:if>
                 <xsl:apply-templates select="scar_type"/>
                 <s:dnaSequence>
@@ -256,10 +260,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                       <s:displayId><xsl:value-of select="generate-id(id)"/></s:displayId>
                       <xsl:choose>
                        <xsl:when test="normalize-space(title)">
-                         <s:name><xsl:value-of select="title"/></s:name>
+                         <rdfs:label><xsl:value-of select="title"/></rdfs:label>
                        </xsl:when>
                        <xsl:otherwise>
-                         <s:name><xsl:value-of select="type"/></s:name>
+                         <rdfs:label><xsl:value-of select="type"/></rdfs:label>
                        </xsl:otherwise>
                      </xsl:choose>
                       <xsl:apply-templates select="type"/>

@@ -4,12 +4,17 @@
 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 xmlns:s="http://sbols.org/v1#"
+xmlns:so="http://purl.obolibrary.org/obo/"
+xmlns:map="SO.RSBPML.mapping.uri"
 xmlns:pr="http://partsregistry.org/"
+xmlns:prt="http://partsregistry.org/type/"
 xmlns:prp="http://partsregistry.org/part/"
 xmlns:pra="http://partsregistry.org/anot/"
 xmlns:prs="http://partsregistry.org/seq/"
 xmlns:prf="http://partsregistry.org/feat/"
 >
+<xsl:param name="so" select="'http://purl.obolibrary.org/obo/'"/>
+<xsl:param name="prt" select="'http://partsregistry.org/type/'"/>
 <xsl:param name="prp" select="'http://partsregistry.org/part/'"/>
 <xsl:param name="pra" select="'http://partsregistry.org/anot/'"/>
 <xsl:param name="prs" select="'http://partsregistry.org/seq/'"/>
@@ -24,6 +29,49 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
 <xsl:key name="parts" match="subpart" use="part_name"/>
+<map:typelist>
+  <entry><rsbpml>cds</rsbpml><so>SO_0000316</so></entry>
+  <entry><rsbpml>coding</rsbpml><so>SO_0000316</so></entry>
+  <entry><rsbpml>conserved</rsbpml><so>SO_0000856</so></entry>
+  <entry><rsbpml>polya</rsbpml><so>SO_0000553</so></entry>
+  <entry><rsbpml>promoter</rsbpml><so>SO_0000167</so></entry>
+  <entry><rsbpml>rbs</rsbpml><so>SO_0000552</so></entry>
+  <entry><rsbpml>regulatory</rsbpml><so>SO_0005836</so></entry>
+  <entry><rsbpml>s_mutation</rsbpml><so>SO_0001017</so></entry>
+  <entry><rsbpml>stem_loop</rsbpml><so>SO_0000313</so></entry>
+  <entry><rsbpml>terminator</rsbpml><so>SO_0000141</so></entry>
+  <entry><rsbpml>binding</rsbpml><so>SO_0000409</so></entry>
+</map:typelist>
+<xsl:key name="types" match="entry" use="rsbpml"/>
+
+<xsl:template name="type">
+  <xsl:variable name="type">
+    <xsl:value-of select="translate(.,$uc,$lc)"/>
+  </xsl:variable>
+  <xsl:variable name="so_type">
+    <xsl:for-each select="document('')/xsl:stylesheet/map:typelist">
+      <xsl:value-of select="key('types',$type)/so"/>
+    </xsl:for-each>
+  </xsl:variable>
+  <xsl:choose>
+    <xsl:when test="normalize-space($so_type)">
+      <rdf:type rdf:resource="{concat($so,$so_type)}"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <rdf:type rdf:resource="{concat($prt,$type)}"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
+<xsl:template match="part_type">
+  <xsl:call-template name="type"/>
+</xsl:template>
+<xsl:template match="scar_type">
+  <xsl:call-template name="type"/>
+</xsl:template>
+<xsl:template match="type">
+  <xsl:call-template name="type"/>
+</xsl:template>
 
 <xsl:template match="/">
 <rdf:RDF>
@@ -42,8 +90,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
       <s:description>
         <xsl:value-of select="normalize-space(part_short_desc)"/>
           </s:description>
-          
-          <rdf:type rdf:resource="{concat($prt,translate(part_type,$uc,$lc))}"/>
+          <xsl:apply-templates select="part_type"/>
           <!-- 
           <xsl:value-of select="part_status"/>
           <xsl:value-of select="part_results"/>
@@ -80,7 +127,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                   </xsl:when>
                 </xsl:choose>
                 <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
-                <rdf:type rdf:resource="{concat($prt,translate(part_type,$uc,$lc))}"/>
+                <xsl:apply-templates select="part_type"/>
          </s:DnaComponent> 
             </s:subComponent>
           </s:SequenceAnnotation>
@@ -104,7 +151,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                   </xsl:when>
                 </xsl:choose>
                 <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
-                <rdf:type rdf:resource="{concat($prt,translate(part_type,$uc,$lc))}"/>
+                <xsl:apply-templates select="part_type"/>
               </s:DnaComponent> 
             </s:subComponent>
           </s:SequenceAnnotation>
@@ -128,7 +175,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                   </xsl:when>
                 </xsl:choose>
                 <s:description><xsl:value-of select="normalize-space(part_short_desc)"/></s:description>
-                <rdf:type rdf:resource="{concat($prt,translate(part_type,$uc,$lc))}"/>
+                <xsl:apply-templates select="scar_type"/>
          </s:DnaComponent> 
             </s:subComponent>
           </s:SequenceAnnotation>
@@ -155,7 +202,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <xsl:if test="normalize-space(scar_comments)">
                   <s:description><xsl:value-of select="normalize-space(scar_comments)"/></s:description>
                 </xsl:if>
-                <rdf:type rdf:resource="{concat($prt,translate(scar_type,$uc,$lc))}"/>
+                <xsl:apply-templates select="scar_type"/>
                 <s:dnaSequence>
                 <s:DnaSequence rdf:about="{concat($prs,generate-id(scar_sequence))}">
                   <s:nucleotides>
@@ -193,14 +240,14 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                   <!-- There is a subpart with the same BBa_ as this feature -->
                   <xsl:when test="starts-with(title,'BBa_') and key('parts',title)">
                     <s:DnaComponent rdf:about="{concat($prp,title)}">
-                      <rdf:type rdf:resource="{concat($prt,translate(type,$uc,$lc))}"/>
+                      <xsl:apply-templates select="type"/>
                     </s:DnaComponent>
                   </xsl:when>
                   <!-- This BBa_ feature is a part, not listed as subpart -->
                   <xsl:when test="starts-with(title,'BBa_') and not(key('parts',title))">
                     <s:DnaComponent rdf:about="{concat($prp,title)}">
                       <s:displayId><xsl:value-of select="title" /></s:displayId>
-                      <rdf:type rdf:resource="{concat($prt,translate(type,$uc,$lc))}"/>
+                      <xsl:apply-templates select="type"/>
                     </s:DnaComponent>
                   </xsl:when>
                   <!-- This feature is not a part -->
@@ -215,7 +262,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                          <s:name><xsl:value-of select="type"/></s:name>
                        </xsl:otherwise>
                      </xsl:choose>
-                      <rdf:type rdf:resource="{concat($prt,translate(type,$uc,$lc))}"/>
+                      <xsl:apply-templates select="type"/>
                     </s:DnaComponent>
                   </xsl:otherwise>
                 </xsl:choose>

@@ -10,7 +10,7 @@ http://convert.sbols.org/biobrick/BBa_T9002
 
 How it works
 -----------
-The URL http://convert.sbols.org/biobrick/* maps to a script "biobricks.php" which takes the Part ID and uses it to retrive the Registry XML from "http://partsregistry.org/cgi/xml/part.cgi?part=".
+The URL http://convert.sbols.org/biobrick/* maps to a script "biobricks.php" which takes the Part ID and uses it to retrive the Registry XML from "http://partsregistry.org/cgi/xml/part.cgi?part=BBa_T9002".
 Then it transforms the XML to SBOL:Core:rdf using an XSLT stylesheet. 
 
 

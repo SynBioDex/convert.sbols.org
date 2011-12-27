@@ -31,7 +31,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
 <xsl:key name="parts" match="subpart" use="part_name"/>
 
-<!-- This section performs the type mapping -->
+<!-- This section performs the TYPE mapping -->
 <map:typelist>
   <entry><rsbpml>cds</rsbpml><so>SO_0000316</so></entry>
   <entry><rsbpml>coding</rsbpml><so>SO_0000316</so></entry>
@@ -88,6 +88,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 </xsl:template>
 
 
+<!-- This section performs the PART mapping -->
 <xsl:template match="/">
 <rdf:RDF>
 
@@ -127,6 +128,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
         </s:DnaSequence>
       </s:dnaSequence>
 
+<!-- This section performs the DEEP sub-part mapping -->
          <xsl:for-each select="deep_subparts/subpart">
          <s:annotations>
           <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
@@ -149,6 +151,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
           </s:annotations>
           </xsl:for-each>
 
+<!-- This section performs the SPECIFIED sub-part mapping -->
           <xsl:for-each select="specified_subparts/subpart">
           <s:annotations>
 
@@ -173,6 +176,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
           </s:annotations>
           </xsl:for-each>
 
+<!-- This section performs the SUBSCAR sub-part mapping -->
           <xsl:for-each select="specified_subscars/subpart">
           <s:annotations>
 
@@ -197,6 +201,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
           </s:annotations>
           </xsl:for-each>
 
+<!-- This section performs the SCAR mapping -->
           <xsl:for-each select="specified_subscars/scar">
           <s:annotations>
           <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
@@ -232,6 +237,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
           </s:annotations>
           </xsl:for-each>
     
+<!-- This section performs the FEATURE mapping -->
         <xsl:for-each select="features/feature">
           <s:annotations>
           <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">

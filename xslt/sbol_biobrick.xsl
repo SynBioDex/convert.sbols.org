@@ -44,6 +44,17 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <entry><rsbpml>stem_loop</rsbpml><so>SO_0000313</so></entry>
   <entry><rsbpml>terminator</rsbpml><so>SO_0000141</so></entry>
   <entry><rsbpml>binding</rsbpml><so>SO_0000409</so></entry>
+  <entry><rsbpml>mutation</rsbpml><so>SO_0001060</so></entry>
+  <entry><rsbpml>operator</rsbpml><so>SO_0000057</so></entry>
+  <entry><rsbpml>plasmid</rsbpml><so>SO_0000155 </so></entry>
+  <entry><rsbpml>plasmid_backbone</rsbpml><so>SO_0000155</so></entry>
+  <entry><rsbpml>primer</rsbpml><so>SO_0000112</so></entry>
+  <entry><rsbpml>primer_binding</rsbpml><so>SO_0005850</so></entry>
+  <entry><rsbpml>protein</rsbpml><so>SO_0000104</so></entry>
+  <entry><rsbpml>protein_domain</rsbpml><so>SO_0000417</so></entry>
+  <entry><rsbpml>start</rsbpml><so>SO_0000323</so></entry>
+  <entry><rsbpml>stop</rsbpml><so>SO_0000327</so></entry>
+  <entry><rsbpml>tag</rsbpml><so>SO_0000324</so></entry>
 </map:typelist>
 <xsl:key name="types" match="entry" use="rsbpml"/>
 

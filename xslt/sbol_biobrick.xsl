@@ -87,6 +87,33 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:call-template name="type"/>
 </xsl:template>
 
+<!-- This section performs the DnaSequence mapping -->
+<xsl:template name="DnaSequence">
+  <xsl:param name="id"/>
+  <xsl:param name="prefix"/>
+  <s:DnaSequence rdf:about="{concat($prs,concat($prefix,$id))}">
+    <s:nucleotides>
+      <xsl:value-of select="translate(.,
+                  '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
+    </s:nucleotides>
+  </s:DnaSequence>
+</xsl:template>
+
+<xsl:template match="sequences/seq_data">
+  <xsl:param name="id"/>
+  <xsl:call-template name="DnaSequence">
+    <xsl:with-param name="id" select="$id"/>
+    <xsl:with-param name="prefix" select="'pid'"/>
+  </xsl:call-template>
+</xsl:template>
+
+<xsl:template match="scar/scar_sequence">
+  <xsl:param name="id"/>
+  <xsl:call-template name="DnaSequence">
+    <xsl:with-param name="id" select="$id"/>
+    <xsl:with-param name="prefix" select="'scar'"/>
+  </xsl:call-template>
+</xsl:template>
 
 <!-- This section performs the PART mapping -->
 <xsl:template match="/">
@@ -107,7 +134,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
         <xsl:value-of select="normalize-space(part_short_desc)"/>
           </rdfs:comment>
           <xsl:apply-templates select="part_type"/>
-          <!-- 
+          <!-- The followinf dont map to SBOL
           <xsl:value-of select="part_status"/>
           <xsl:value-of select="part_results"/>
           <xsl:value-of select="part_nickname"/>
@@ -120,12 +147,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
             <xsl:value-of select="."/>
           -->
       <s:dnaSequence>
-        <s:DnaSequence rdf:about="{concat($prs,generate-id())}">
-          <s:nucleotides>
-            <xsl:value-of select="translate(sequences/seq_data, 
-                        '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
-          </s:nucleotides>
-        </s:DnaSequence>
+        <!-- DS uri is prs:id+part_id, as DC-DS is strictly 1to1-->
+        <xsl:apply-templates select="sequences/seq_data">
+          <xsl:with-param name="id" select="part_id"/>
+        </xsl:apply-templates>
       </s:dnaSequence>
 
 <!-- This section performs the DEEP sub-part mapping -->
@@ -224,13 +249,11 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 </xsl:if>
                 <xsl:apply-templates select="scar_type"/>
                 <s:dnaSequence>
-                <s:DnaSequence rdf:about="{concat($prs,generate-id(scar_sequence))}">
-                  <s:nucleotides>
-                    <xsl:value-of select="translate(scar_sequence, 
-                      '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
-                    </s:nucleotides>
-                  </s:DnaSequence>
-           </s:dnaSequence>
+                  <!-- DS uri is prs:scar+scar_id -->
+                  <xsl:apply-templates select="scar_sequence">
+                    <xsl:with-param name="id" select="scar_id"/>
+                  </xsl:apply-templates>
+                </s:dnaSequence>
               </s:DnaComponent> 
             </s:subComponent>
           </s:SequenceAnnotation>

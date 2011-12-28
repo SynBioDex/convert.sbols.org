@@ -185,24 +185,30 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
             </xsl:choose>
             <s:subComponent>
                 <xsl:choose>
-                  <!-- There is a subpart with the same BBa_ as this feature -->
-                  <xsl:when test="starts-with(title,'BBa_') and key('parts',title)">
-                   <s:DnaComponent rdf:about="{concat($prp,title)}">
-                      <xsl:apply-templates select="type"/>
-                    </s:DnaComponent>
-                  </xsl:when>
-                  <!-- This BBa_ feature is a part, not listed as subpart -->
-                  <xsl:when test="starts-with(title,'BBa_') and not(key('parts',title))">
-                    <xsl:call-template name="DC">
-                      <xsl:with-param name="id" select="title"/>
-                      <xsl:with-param name="type" select="type"/>
-                    </xsl:call-template>
+                  <!-- This is a BBa feature -->
+                  <xsl:when test="starts-with(title,'BBa_')">
+                    <xsl:param name="bba_title" select="substring-before(title,' ')"/>
+                    <xsl:choose>
+                     <!-- There is a subpart with the same BBa_ as this feature -->
+                     <xsl:when test="key('parts',$bba_title)">
+                       <s:DnaComponent rdf:about="{concat($prp,$bba_title)}">
+                       </s:DnaComponent>
+                       <xsl:apply-templates select="type"/>
+                     </xsl:when>
+                     <!-- This BBa_ feature is a part, not listed as subpart -->
+                     <xsl:when test="not(key('parts',$bba_title))">
+                       <xsl:call-template name="DC">
+                        <xsl:with-param name="id" select="$bba_title"/>
+                        <xsl:with-param name="type" select="type"/>
+                      </xsl:call-template>
+                     </xsl:when>
+                   </xsl:choose>
                   </xsl:when>
                   <!-- This feature is not a part -->
                   <xsl:otherwise>
-                    <s:DnaComponent rdf:about="{concat($prf,concat($prefix,id))}">
-                      <s:displayId><xsl:value-of select="concat($prefix,id)"/></s:displayId>
-                      <xsl:choose>
+                     <s:DnaComponent rdf:about="{concat($prf,concat($prefix,id))}">
+                     <s:displayId><xsl:value-of select="concat($prefix,id)"/></s:displayId>
+                     <xsl:choose>
                        <xsl:when test="normalize-space(title)">
                          <rdfs:label><xsl:value-of select="title"/></rdfs:label>
                        </xsl:when>
@@ -210,8 +216,8 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                          <rdfs:label><xsl:value-of select="type"/></rdfs:label>
                        </xsl:otherwise>
                      </xsl:choose>
-                      <xsl:apply-templates select="type"/>
-                    </s:DnaComponent>
+                        <xsl:apply-templates select="type"/>
+                     </s:DnaComponent>
                   </xsl:otherwise>
                 </xsl:choose>
             </s:subComponent>

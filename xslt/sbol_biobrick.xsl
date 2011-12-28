@@ -29,6 +29,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:output indent="yes"/>
 <xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
+<xsl:variable name="anotprefix">an</xsl:variable>
 <xsl:key name="parts" match="subpart" use="part_name"/>
 
 <!-- This section performs the TYPE mapping -->
@@ -120,9 +121,11 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <!-- This section performs the SUBPART mapping -->
 <xsl:template match="subpart">
   <xsl:param name="id" select="part_id"/>
-  <xsl:param name="prefix" select="'an'"/>
+  <xsl:param name="prefix" select="$anotprefix"/>
   <s:annotation>
   <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
+    <!-- when the preceeding sib is a scar $prefix is wrong one here
+         need to test for preceeding sibling w type scar -->
     <xsl:if test="preceding-sibling::*">
     <s:precedes rdf:resource="{concat($pra,concat($prefix,preceding-sibling::subpart[1]/part_id))}"/>
     </xsl:if>
@@ -141,11 +144,11 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <!-- This section performs the SCAR mapping -->
 <xsl:template match="scar">
   <xsl:param name="id" select="scar_id"/>
-  <xsl:param name="prefix" select="'an'"/>
+  <xsl:param name="prefix" select="'sc'"/>
   <s:annotation>
     <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
       <xsl:if test="preceding-sibling::*">
-      <s:precedes rdf:resource="{concat($pra,concat($prefix,preceding-sibling::subpart[1]/part_id))}"/>
+      <s:precedes rdf:resource="{concat($pra,concat($anotprefix,preceding-sibling::subpart[1]/part_id))}"/>
       </xsl:if>
       <s:subComponent>
         <xsl:call-template name="DC">

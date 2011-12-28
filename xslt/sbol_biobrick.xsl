@@ -47,7 +47,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <entry><rsbpml>binding</rsbpml><so>SO_0000409</so></entry>
   <entry><rsbpml>mutation</rsbpml><so>SO_0001060</so></entry>
   <entry><rsbpml>operator</rsbpml><so>SO_0000057</so></entry>
-  <entry><rsbpml>plasmid</rsbpml><so>SO_0000155 </so></entry>
+  <entry><rsbpml>plasmid</rsbpml><so>SO_0000155</so></entry>
   <entry><rsbpml>plasmid_backbone</rsbpml><so>SO_0000155</so></entry>
   <entry><rsbpml>primer</rsbpml><so>SO_0000112</so></entry>
   <entry><rsbpml>primer_binding</rsbpml><so>SO_0005850</so></entry>

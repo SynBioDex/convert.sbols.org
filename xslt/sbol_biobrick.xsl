@@ -87,23 +87,25 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:call-template name="type"/>
 </xsl:template>
 
-<!-- This section performs the DnaSequence mapping -->
+<!-- This section performs the SEQUENCE mapping -->
 <xsl:template name="DnaSequence">
   <xsl:param name="id"/>
   <xsl:param name="prefix"/>
+  <s:dnaSequence>
   <s:DnaSequence rdf:about="{concat($prs,concat($prefix,$id))}">
     <s:nucleotides>
       <xsl:value-of select="translate(.,
                   '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
     </s:nucleotides>
   </s:DnaSequence>
+  </s:dnaSequence>
 </xsl:template>
 
 <xsl:template match="sequences/seq_data">
   <xsl:param name="id"/>
   <xsl:call-template name="DnaSequence">
     <xsl:with-param name="id" select="$id"/>
-    <xsl:with-param name="prefix" select="'pid'"/>
+    <xsl:with-param name="prefix" select="'part'"/>
   </xsl:call-template>
 </xsl:template>
 
@@ -115,155 +117,54 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   </xsl:call-template>
 </xsl:template>
 
-<!-- This section performs the PART mapping -->
-<xsl:template match="/">
-<rdf:RDF>
-
-  <xsl:for-each select="rsbpml/part_list/part">
-    <s:DnaComponent rdf:about="{concat($prp,part_name)}">
-      <s:displayId><xsl:value-of select="part_name"/></s:displayId>
-        <xsl:choose>
-          <xsl:when test="normalize-space(part_nickname)">
-            <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
-          </xsl:when>
-          <xsl:otherwise>
-            <rdfs:label><xsl:value-of select="part_short_name"/></rdfs:label>
-          </xsl:otherwise>
-        </xsl:choose>
-      <rdfs:comment>
-        <xsl:value-of select="normalize-space(part_short_desc)"/>
-          </rdfs:comment>
-          <xsl:apply-templates select="part_type"/>
-          <!-- The followinf dont map to SBOL
-          <xsl:value-of select="part_status"/>
-          <xsl:value-of select="part_results"/>
-          <xsl:value-of select="part_nickname"/>
-          <xsl:value-of select="part_rating"/>
-          <xsl:value-of select="part_entered"/>
-          <xsl:value-of select="part_author"/>
-          <xsl:value-of select="best_quality"/>
-          <xsl:value-of select="categories/category"/>
-          <xsl:for-each select="twins/twin">
-            <xsl:value-of select="."/>
-          -->
-      <s:dnaSequence>
-        <!-- DS uri is prs:id+part_id, as DC-DS is strictly 1to1-->
-        <xsl:apply-templates select="sequences/seq_data">
-          <xsl:with-param name="id" select="part_id"/>
-        </xsl:apply-templates>
-      </s:dnaSequence>
-
-<!-- This section performs the DEEP sub-part mapping -->
-         <xsl:for-each select="deep_subparts/subpart">
-         <s:annotations>
-          <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
-            <xsl:if test="preceding-sibling::*">
-            <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
-            </xsl:if>
-            <s:subComponent>
-              <s:DnaComponent rdf:about="{concat($prp,part_name)}"> 
-                <s:displayId><xsl:value-of select="part_name"/></s:displayId>
-                <xsl:choose>
-                  <xsl:when test="normalize-space(part_nickname)">
-                     <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
-                  </xsl:when>
-                </xsl:choose>
-                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
-                <xsl:apply-templates select="part_type"/>
-         </s:DnaComponent> 
-            </s:subComponent>
-          </s:SequenceAnnotation>
-          </s:annotations>
-          </xsl:for-each>
-
-<!-- This section performs the SPECIFIED sub-part mapping -->
-          <xsl:for-each select="specified_subparts/subpart">
-          <s:annotations>
-
-          <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
-            <xsl:if test="preceding-sibling::*">
-            <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
-            </xsl:if>
-            <s:subComponent>
-
-              <s:DnaComponent rdf:about="{concat($prp,part_name)}"> 
-                <s:displayId><xsl:value-of select="part_name"/></s:displayId>
-                <xsl:choose>
-                  <xsl:when test="normalize-space(part_nickname)">
-                  <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
-                  </xsl:when>
-                </xsl:choose>
-                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
-                <xsl:apply-templates select="part_type"/>
-              </s:DnaComponent> 
-            </s:subComponent>
-          </s:SequenceAnnotation>
-          </s:annotations>
-          </xsl:for-each>
-
-<!-- This section performs the SUBSCAR sub-part mapping -->
-          <xsl:for-each select="specified_subscars/subpart">
-          <s:annotations>
-
-          <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
-            <xsl:if test="preceding-sibling::*">
-            <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
-            </xsl:if>
-            <s:subComponent>
-
-              <s:DnaComponent rdf:about="{concat($prp,part_name)}"> 
-                <s:displayId><xsl:value-of select="part_name"/></s:displayId>
-                <xsl:choose>
-                  <xsl:when test="normalize-space(part_nickname)">
-                  <rdfs:label><xsl:value-of select="part_nickname"/></rdfs:label>
-                  </xsl:when>
-                </xsl:choose>
-                <rdfs:comment><xsl:value-of select="normalize-space(part_short_desc)"/></rdfs:comment>
-                <xsl:apply-templates select="scar_type"/>
-         </s:DnaComponent> 
-            </s:subComponent>
-          </s:SequenceAnnotation>
-          </s:annotations>
-          </xsl:for-each>
+<!-- This section performs the SUBPART mapping -->
+<xsl:template match="subpart">
+  <xsl:param name="id" select="part_id"/>
+  <xsl:param name="prefix" select="'an'"/>
+  <s:annotation>
+  <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
+    <xsl:if test="preceding-sibling::*">
+    <s:precedes rdf:resource="{concat($pra,concat($prefix,preceding-sibling::subpart[1]/part_id))}"/>
+    </xsl:if>
+    <s:subComponent>
+      <xsl:call-template name="DC">
+        <xsl:with-param name="id" select="part_name"/>
+        <xsl:with-param name="name" select="part_nickname"/>
+        <xsl:with-param name="desc" select="part_short_desc"/>
+        <xsl:with-param name="type" select="part_type"/>
+      </xsl:call-template>
+    </s:subComponent>
+  </s:SequenceAnnotation>
+  </s:annotation>
+</xsl:template>
 
 <!-- This section performs the SCAR mapping -->
-          <xsl:for-each select="specified_subscars/scar">
-          <s:annotations>
-          <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
-            <xsl:if test="preceding-sibling::*">
-            <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
-            </xsl:if>
-            <s:subComponent>
-              <s:DnaComponent rdf:about="{concat($prp,concat('RFC_',scar_standard))}"> 
-                <s:displayId><xsl:value-of select="concat('RFC_',scar_standard)"/></s:displayId>
-                <xsl:choose>
-                  <xsl:when test="normalize-space(scar_nickname)">
-                  <rdfs:label><xsl:value-of select="scar_nickname"/></rdfs:label>
-                  </xsl:when>
-                  <xsl:otherwise>
-                  <rdfs:label><xsl:value-of select="scar_name"/></rdfs:label>
-                  </xsl:otherwise>
-                </xsl:choose>
-                <xsl:if test="normalize-space(scar_comments)">
-                  <rdfs:comment><xsl:value-of select="normalize-space(scar_comments)"/></rdfs:comment>
-                </xsl:if>
-                <xsl:apply-templates select="scar_type"/>
-                <s:dnaSequence>
-                  <!-- DS uri is prs:scar+scar_id -->
-                  <xsl:apply-templates select="scar_sequence">
-                    <xsl:with-param name="id" select="scar_id"/>
-                  </xsl:apply-templates>
-                </s:dnaSequence>
-              </s:DnaComponent> 
-            </s:subComponent>
-          </s:SequenceAnnotation>
-          </s:annotations>
-          </xsl:for-each>
-    
+<xsl:template match="scar">
+  <xsl:param name="id" select="scar_id"/>
+  <xsl:param name="prefix" select="'an'"/>
+  <s:annotation>
+    <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
+      <xsl:if test="preceding-sibling::*">
+      <s:precedes rdf:resource="{concat($pra,concat($prefix,preceding-sibling::subpart[1]/part_id))}"/>
+      </xsl:if>
+      <s:subComponent>
+        <xsl:call-template name="DC">
+          <xsl:with-param name="id" select="concat('RFC_',scar_standard)"/>
+          <xsl:with-param name="name" select="scar_nickname"/>
+          <xsl:with-param name="desc" select="scar_comments"/>
+          <xsl:with-param name="type" select="scar_type"/>
+        </xsl:call-template>
+      </s:subComponent>
+    </s:SequenceAnnotation>
+
+  </s:annotation>
+</xsl:template>
+
 <!-- This section performs the FEATURE mapping -->
-        <xsl:for-each select="features/feature">
-          <s:annotations>
-          <s:SequenceAnnotation rdf:about="{concat($pra,generate-id())}">
+<xsl:template match="feature">
+  <xsl:param name="prefix" select="'f'"/>
+          <s:annotation>
+          <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,id))}">
 <!--
             <xsl:if test="preceding-sibling::*">
             <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
@@ -283,21 +184,21 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 <xsl:choose>
                   <!-- There is a subpart with the same BBa_ as this feature -->
                   <xsl:when test="starts-with(title,'BBa_') and key('parts',title)">
-                    <s:DnaComponent rdf:about="{concat($prp,title)}">
+                   <s:DnaComponent rdf:about="{concat($prp,title)}">
                       <xsl:apply-templates select="type"/>
                     </s:DnaComponent>
                   </xsl:when>
                   <!-- This BBa_ feature is a part, not listed as subpart -->
                   <xsl:when test="starts-with(title,'BBa_') and not(key('parts',title))">
-                    <s:DnaComponent rdf:about="{concat($prp,title)}">
-                      <s:displayId><xsl:value-of select="title" /></s:displayId>
-                      <xsl:apply-templates select="type"/>
-                    </s:DnaComponent>
+                    <xsl:call-template name="DC">
+                      <xsl:with-param name="id" select="title"/>
+                      <xsl:with-param name="type" select="type"/>
+                    </xsl:call-template>
                   </xsl:when>
                   <!-- This feature is not a part -->
                   <xsl:otherwise>
-                    <s:DnaComponent rdf:about="{concat($prf,generate-id(id))}">
-                      <s:displayId><xsl:value-of select="generate-id(id)"/></s:displayId>
+                    <s:DnaComponent rdf:about="{concat($prf,concat($prefix,id))}">
+                      <s:displayId><xsl:value-of select="concat($prefix,id)"/></s:displayId>
                       <xsl:choose>
                        <xsl:when test="normalize-space(title)">
                          <rdfs:label><xsl:value-of select="title"/></rdfs:label>
@@ -312,14 +213,81 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                 </xsl:choose>
             </s:subComponent>
           </s:SequenceAnnotation>
-          </s:annotations>
+          </s:annotation>
+</xsl:template>
 
-        </xsl:for-each>
- 
-
+<!-- This section defines the DC mapping -->
+<xsl:template name="DC">
+  <xsl:param name="id"/>
+  <xsl:param name="name"/>
+  <xsl:param name="desc"/>
+  <xsl:param name="type"/>
+  <s:DnaComponent rdf:about="{concat($prp,$id)}">
+    <s:displayId><xsl:value-of select="$id"/></s:displayId>
+    <xsl:if test="normalize-space($name)">
+      <rdfs:label><xsl:value-of select="normalize-space($name)"/></rdfs:label>
+    </xsl:if>
+    <xsl:if test="normalize-space($desc)">
+    <rdfs:comment><xsl:value-of select="normalize-space($desc)"/></rdfs:comment>
+    </xsl:if>
+    <!-- This section performs the TYPE mapping -->
+    <xsl:apply-templates select="$type"/>
+    <!-- This section performs the SEQUENCE mapping -->
+    <!-- DS uri is prs:id+part_id, as DC-DS is strictly 1to1-->
+    <xsl:apply-templates select="scar_sequence">
+      <xsl:with-param name="id" select="scar_id"/>
+    </xsl:apply-templates>
+    <xsl:apply-templates select="sequences/seq_data">
+      <xsl:with-param name="id" select="part_id"/>
+    </xsl:apply-templates>
+        <!-- The following dont map to SBOL
+        <xsl:value-of select="part_status"/>
+        <xsl:value-of select="part_results"/>
+        <xsl:value-of select="part_nickname"/>
+        <xsl:value-of select="part_rating"/>
+        <xsl:value-of select="part_entered"/>
+        <xsl:value-of select="part_author"/>
+        <xsl:value-of select="best_quality"/>
+        <xsl:value-of select="categories/category"/>
+        <xsl:for-each select="twins/twin"> <xsl:value-of select="."/> -->
+    <!-- This section performs the DEEP sub-part mapping -->
+    <xsl:apply-templates select="deep_subparts/subpart"/>
+    <!-- This section performs the SPECIFIED sub-part mapping -->
+    <xsl:apply-templates select="specified_subparts/subpart"/>
+    <!-- This section performs the SUBSCAR sub-part mapping -->
+    <xsl:apply-templates select="specified_subscars/subpart"/>
+    <!-- This section performs the SCAR mapping -->
+    <xsl:apply-templates select="specified_subscars/scar"/>
+    <!-- This section performs the FEATURE mapping -->
+    <xsl:apply-templates select="features/feature"/>
   </s:DnaComponent>
-  </xsl:for-each>
+</xsl:template>
 
+<!-- This section performs the main PART mapping -->
+<xsl:template match="part">
+  <xsl:param name="id"/>
+
+  <xsl:call-template name="DC">
+    <xsl:with-param name="id" select="part_name"/>
+    <xsl:with-param name="name">
+      <xsl:choose>
+        <xsl:when test="normalize-space(part_nickname)">
+          <xsl:value-of select="part_nickname"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="part_short_name"/>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:with-param>
+    <xsl:with-param name="desc" select="part_short_desc"/>
+    <xsl:with-param name="type" select="part_type"/>
+  </xsl:call-template>
+</xsl:template>
+
+<!-- This section performs the RSBPML mapping -->
+<xsl:template match="/">
+<rdf:RDF>
+  <xsl:apply-templates select="rsbpml/part_list/part"/>
 </rdf:RDF>
 </xsl:template>
 

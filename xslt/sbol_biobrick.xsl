@@ -120,14 +120,16 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 
 <!-- This section performs the SUBPART mapping -->
 <xsl:template match="subpart">
-  <xsl:param name="id" select="part_id"/>
-  <xsl:param name="prefix" select="$anotprefix"/>
+  <xsl:param name="prefix" select="'AN'"/>
+  <xsl:param name="pre" select="concat($prefix,position())"/>
+  <xsl:param name="id" select="concat(concat(concat(concat(../../part_id,'_'),part_id),'_'),position())"/>
+  <!--<xsl:param name="prefix" select="$anotprefix"/>-->
   <s:annotation>
   <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
     <!-- when the preceeding sib is a scar $prefix is wrong one here
          need to test for preceeding sibling w type scar -->
-    <xsl:if test="preceding-sibling::*">
-    <s:precedes rdf:resource="{concat($pra,concat($prefix,preceding-sibling::subpart[1]/part_id))}"/>
+    <xsl:if test="following-sibling::*">
+    <s:precedes rdf:resource="{concat($pra,concat('an',following-sibling::subpart[1]/part_id))}"/>
     </xsl:if>
     <s:subComponent>
       <xsl:call-template name="DC">
@@ -147,8 +149,8 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:param name="prefix" select="'sc'"/>
   <s:annotation>
     <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
-      <xsl:if test="preceding-sibling::*">
-      <s:precedes rdf:resource="{concat($pra,concat($anotprefix,preceding-sibling::subpart[1]/part_id))}"/>
+      <xsl:if test="following-sibling::*">
+      <s:precedes rdf:resource="{concat($pra,concat($anotprefix,following-sibling::subpart[1]/part_id))}"/>
       </xsl:if>
       <s:subComponent>
         <xsl:call-template name="DC">
@@ -169,8 +171,8 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
           <s:annotation>
           <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,id))}">
 <!--
-            <xsl:if test="preceding-sibling::*">
-            <s:precedes rdf:resource="{concat($pra,generate-id(preceding-sibling::*))}"/>
+            <xsl:if test="following-sibling::*">
+            <s:precedes rdf:resource="{concat($pra,generate-id(following-sibling::*))}"/>
             </xsl:if>
 -->
             <s:bioStart><xsl:value-of select="startpos"/></s:bioStart>

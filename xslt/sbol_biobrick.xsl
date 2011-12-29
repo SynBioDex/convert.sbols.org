@@ -29,7 +29,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:output indent="yes"/>
 <xsl:variable name="lc">abcdefghijklmnopqrstuvwxyz</xsl:variable>
 <xsl:variable name="uc">ABCDEFGHIJKLMNOPQRSTUVWXYZ</xsl:variable>
-<xsl:variable name="anotprefix">an</xsl:variable>
+<xsl:variable name="anotprefix">an_</xsl:variable>
 <xsl:key name="parts" match="subpart" use="part_name"/>
 
 <!-- This section performs the TYPE mapping -->
@@ -106,7 +106,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:param name="id"/>
   <xsl:call-template name="DnaSequence">
     <xsl:with-param name="id" select="$id"/>
-    <xsl:with-param name="prefix" select="'part'"/>
+    <xsl:with-param name="prefix" select="'partseq_'"/>
   </xsl:call-template>
 </xsl:template>
 
@@ -114,22 +114,22 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:param name="id"/>
   <xsl:call-template name="DnaSequence">
     <xsl:with-param name="id" select="$id"/>
-    <xsl:with-param name="prefix" select="'scar'"/>
+    <xsl:with-param name="prefix" select="'scarseq_'"/>
   </xsl:call-template>
 </xsl:template>
 
 <!-- This section performs the SUBPART mapping -->
 <xsl:template match="subpart">
-  <xsl:param name="prefix" select="'AN'"/>
-  <xsl:param name="pre" select="concat($prefix,position())"/>
+  <xsl:param name="prefix" select="$anotprefix"/>
   <xsl:param name="id" select="concat(concat(concat(concat(../../part_id,'_'),part_id),'_'),position())"/>
-  <!--<xsl:param name="prefix" select="$anotprefix"/>-->
   <s:annotation>
   <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
     <!-- when the preceeding sib is a scar $prefix is wrong one here
          need to test for preceeding sibling w type scar -->
     <xsl:if test="following-sibling::*">
-    <s:precedes rdf:resource="{concat($pra,concat('an',following-sibling::subpart[1]/part_id))}"/>
+    <xsl:param name="next_sib" select="following-sibling::subpart[1]"/>
+    <xsl:param name="pre_id" select="concat(concat(concat(concat($next_sib/../../part_id,'_'),$next_sib/part_id),'_'),position()+1)"/>
+    <s:precedes rdf:resource="{concat($pra,concat($prefix,$pre_id))}"/>
     </xsl:if>
     <s:subComponent>
       <xsl:call-template name="DC">
@@ -145,12 +145,14 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 
 <!-- This section performs the SCAR mapping -->
 <xsl:template match="scar">
-  <xsl:param name="id" select="scar_id"/>
-  <xsl:param name="prefix" select="'sc'"/>
+  <xsl:param name="prefix" select="'sc_'"/>
+  <xsl:param name="id" select="concat(concat(concat(concat(../../part_id,'_'),scar_id),'_'),position())"/>
   <s:annotation>
     <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
       <xsl:if test="following-sibling::*">
-      <s:precedes rdf:resource="{concat($pra,concat($anotprefix,following-sibling::subpart[1]/part_id))}"/>
+      <xsl:param name="next_sib" select="following-sibling::subpart[1]"/>
+      <xsl:param name="pre_id" select="concat(concat(concat(concat($next_sib/../../part_id,'_'),$next_sib/part_id),'_'),position()+1)"/>
+      <s:precedes rdf:resource="{concat($pra,concat($anotprefix,$pre_id))}"/>
       </xsl:if>
       <s:subComponent>
         <xsl:call-template name="DC">
@@ -167,7 +169,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 
 <!-- This section performs the FEATURE mapping -->
 <xsl:template match="feature">
-  <xsl:param name="prefix" select="'f'"/>
+  <xsl:param name="prefix" select="'f_'"/>
           <s:annotation>
           <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,id))}">
 <!--

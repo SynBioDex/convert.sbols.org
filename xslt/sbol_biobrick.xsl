@@ -125,7 +125,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <s:annotation>
   <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,$id))}">
     <!-- when the preceeding sib is a scar $prefix is wrong one here
-         need to test for preceeding sibling w type scar -->
+         need to test for following sibling w type scar.
+         Since the scars are processed separetly there seems to be 
+         an issue connecting subparts and scars. Maybe try subparts/* 
+         path and see what happens -->
     <xsl:if test="following-sibling::*">
     <xsl:param name="next_sib" select="following-sibling::subpart[1]"/>
     <xsl:param name="pre_id" select="concat(concat(concat(concat($next_sib/../../part_id,'_'),$next_sib/part_id),'_'),position()+1)"/>

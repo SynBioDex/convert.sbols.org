@@ -117,14 +117,16 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:template name="DnaSequence">
   <xsl:param name="id"/>
   <xsl:param name="prefix"/>
-  <s:dnaSequence>
-  <s:DnaSequence rdf:about="{concat($prs,concat($prefix,$id))}">
-    <s:nucleotides>
-      <xsl:value-of select="translate(.,
-                  '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
-    </s:nucleotides>
-  </s:DnaSequence>
-  </s:dnaSequence>
+  <xsl:if test="normalize-space(.)">
+    <s:dnaSequence>
+    <s:DnaSequence rdf:about="{concat($prs,concat($prefix,$id))}">
+      <s:nucleotides>
+        <xsl:value-of select="translate(.,
+                    '&#x20;&#x9;&#xD;&#xA;', ' ')"/>
+      </s:nucleotides>
+    </s:DnaSequence>
+    </s:dnaSequence>
+  </xsl:if>
 </xsl:template>
 
 <xsl:template match="sequences/seq_data">

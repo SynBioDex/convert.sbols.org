@@ -13,6 +13,8 @@ xmlns:prp="http://partsregistry.org/part/"
 xmlns:pra="http://partsregistry.org/anot/"
 xmlns:prs="http://partsregistry.org/seq/"
 xmlns:prf="http://partsregistry.org/feat/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://sbols.org/v1# ../schema/sbol.xsd http://www.w3.org/1999/02/22-rdf-syntax-ns# ../schema/rdf.xsd"
 >
 <xsl:param name="so" select="'http://purl.obolibrary.org/obo/'"/>
 <xsl:param name="prt" select="'http://partsregistry.org/type/'"/>

@@ -242,10 +242,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                      <s:displayId><xsl:value-of select="concat($prefix,id)"/></s:displayId>
                      <xsl:choose>
                        <xsl:when test="normalize-space(title)">
-                         <rdfs:label><xsl:value-of select="title"/></rdfs:label>
+                         <s:name><xsl:value-of select="title"/></s:name>
                        </xsl:when>
                        <xsl:otherwise>
-                         <rdfs:label><xsl:value-of select="type"/></rdfs:label>
+                         <s:name><xsl:value-of select="type"/></s:name>
                        </xsl:otherwise>
                      </xsl:choose>
                         <xsl:apply-templates select="type" mode="non-so"/>
@@ -268,10 +268,10 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
     <xsl:apply-templates select="$type" mode="so"/>
     <s:displayId><xsl:value-of select="$id"/></s:displayId>
     <xsl:if test="normalize-space($name)">
-      <rdfs:label><xsl:value-of select="normalize-space($name)"/></rdfs:label>
+      <s:name><xsl:value-of select="normalize-space($name)"/></s:name>
     </xsl:if>
     <xsl:if test="normalize-space($desc)">
-    <rdfs:comment><xsl:value-of select="normalize-space($desc)"/></rdfs:comment>
+    <s:description><xsl:value-of select="normalize-space($desc)"/></s:description>
     </xsl:if>
     <!-- This section performs the SEQUENCE mapping -->
     <!-- DS uri is prs:id+part_id, as DC-DS is strictly 1to1-->

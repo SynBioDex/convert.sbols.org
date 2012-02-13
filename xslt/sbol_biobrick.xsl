@@ -200,6 +200,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <!-- This section performs the FEATURE mapping -->
 <xsl:template match="feature">
   <xsl:param name="prefix" select="'f_'"/>
+    <xsl:if test="endpos >= startpos">
           <s:annotation>
           <s:SequenceAnnotation rdf:about="{concat($pra,concat($prefix,id))}">
 <!--
@@ -259,6 +260,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
             </s:subComponent>
           </s:SequenceAnnotation>
           </s:annotation>
+    </xsl:if>
 </xsl:template>
 
 <!-- This section defines the DC mapping -->

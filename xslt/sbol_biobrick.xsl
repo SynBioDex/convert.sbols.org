@@ -60,6 +60,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
 <xsl:key name="types" match="entry" use="rsbpml"/>
 
 <xsl:template name="type">
+  <xsl:param name="so_flag"/>
   <xsl:variable name="type">
     <xsl:value-of select="translate(.,$uc,$lc)"/>
   </xsl:variable>
@@ -68,24 +69,46 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
       <xsl:value-of select="key('types',$type)/so"/>
     </xsl:for-each>
   </xsl:variable>
+
   <xsl:choose>
-    <xsl:when test="normalize-space($so_type)">
+    <xsl:when test="$so_flag=1 and normalize-space($so_type)">
       <rdf:type rdf:resource="{concat($so,$so_type)}"/>
     </xsl:when>
-    <xsl:otherwise>
+    <xsl:when test="$so_flag=0">
       <rdf:type rdf:resource="{concat($prt,$type)}"/>
-    </xsl:otherwise>
+    </xsl:when>
   </xsl:choose>
 </xsl:template>
 
-<xsl:template match="part_type">
-  <xsl:call-template name="type"/>
+<xsl:template match="part_type" mode="so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="1"/>
+  </xsl:call-template>
 </xsl:template>
-<xsl:template match="scar_type">
-  <xsl:call-template name="type"/>
+<xsl:template match="part_type" mode="non-so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="0"/>
+  </xsl:call-template>
 </xsl:template>
-<xsl:template match="type">
-  <xsl:call-template name="type"/>
+<xsl:template match="scar_type" mode="so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="1"/>
+  </xsl:call-template>
+</xsl:template>
+<xsl:template match="scar_type" mode="non-so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="0"/>
+  </xsl:call-template>
+</xsl:template>
+<xsl:template match="type" mode="so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="1"/>
+  </xsl:call-template>
+</xsl:template>
+<xsl:template match="type" mode="non-so">
+  <xsl:call-template name="type">
+    <xsl:with-param name="so_flag" select="0"/>
+  </xsl:call-template>
 </xsl:template>
 
 <!-- This section performs the SEQUENCE mapping -->
@@ -199,8 +222,9 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                      <!-- There is a subpart with the same BBa_ as this feature -->
                      <xsl:when test="key('parts',$bba_title)">
                        <s:DnaComponent rdf:about="{concat($prp,$bba_title)}">
+                       <xsl:apply-templates select="type" mode="so"/>
+                       <xsl:apply-templates select="type" mode="non-so"/>
                        </s:DnaComponent>
-                       <xsl:apply-templates select="type"/>
                      </xsl:when>
                      <!-- This BBa_ feature is a part, not listed as subpart -->
                      <xsl:when test="not(key('parts',$bba_title))">
@@ -214,6 +238,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                   <!-- This feature is not a part -->
                   <xsl:otherwise>
                      <s:DnaComponent rdf:about="{concat($prf,concat($prefix,id))}">
+                     <xsl:apply-templates select="type" mode="so"/>
                      <s:displayId><xsl:value-of select="concat($prefix,id)"/></s:displayId>
                      <xsl:choose>
                        <xsl:when test="normalize-space(title)">
@@ -223,7 +248,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
                          <rdfs:label><xsl:value-of select="type"/></rdfs:label>
                        </xsl:otherwise>
                      </xsl:choose>
-                        <xsl:apply-templates select="type"/>
+                        <xsl:apply-templates select="type" mode="non-so"/>
                      </s:DnaComponent>
                   </xsl:otherwise>
                 </xsl:choose>
@@ -239,6 +264,8 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <xsl:param name="desc"/>
   <xsl:param name="type"/>
   <s:DnaComponent rdf:about="{concat($prp,$id)}">
+    <!-- This section performs the SO TYPE mapping -->
+    <xsl:apply-templates select="$type" mode="so"/>
     <s:displayId><xsl:value-of select="$id"/></s:displayId>
     <xsl:if test="normalize-space($name)">
       <rdfs:label><xsl:value-of select="normalize-space($name)"/></rdfs:label>
@@ -246,8 +273,6 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
     <xsl:if test="normalize-space($desc)">
     <rdfs:comment><xsl:value-of select="normalize-space($desc)"/></rdfs:comment>
     </xsl:if>
-    <!-- This section performs the TYPE mapping -->
-    <xsl:apply-templates select="$type"/>
     <!-- This section performs the SEQUENCE mapping -->
     <!-- DS uri is prs:id+part_id, as DC-DS is strictly 1to1-->
     <xsl:apply-templates select="scar_sequence">
@@ -276,6 +301,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
     <xsl:apply-templates select="specified_subscars/scar"/>
     <!-- This section performs the FEATURE mapping -->
     <xsl:apply-templates select="features/feature"/>
+    <xsl:apply-templates select="$type" mode="non-so"/>
   </s:DnaComponent>
 </xsl:template>
 

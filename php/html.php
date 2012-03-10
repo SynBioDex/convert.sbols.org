@@ -54,10 +54,11 @@ function ifget()
         echo "Not a server request\n"; 
     } else {
         $expl = explode("/",$_SERVER["REQUEST_URI"]);
+        $host = $_SERVER["SERVER_NAME"];
         $part_id = $expl[count($expl)-1];
         $clean_part_id = clean($part_id);
         //$x = transform($part.".xml","sbol_biobrick.xsl");
-        $x = transform("http://partsregistry.org/xml/part.".$clean_part_id,"http://convert.sbols.org/xslt/html_biobrick.xsl");
+        $x = transform("http://partsregistry.org/xml/part.".$clean_part_id,"http://".$host."/xslt/html_biobrick.xsl");
         print $x;
     }
 }

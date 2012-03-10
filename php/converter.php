@@ -98,7 +98,7 @@ if(empty($_SERVER["REQUEST_URI"])) {
         if (PHP_SAPI === 'cli'){
            $opt = parseArgs($argv); 
            $part_file = $opt[0];
-           $x = transform($part_file,"/home/mgaldzic/www/dev.convert.sbols.org/xslt/sbol_biobrick.xsl");
+           $x = transform($part_file,__DIR__."/../xslt/sbol_biobrick.xsl");
            print $x;
         } 
     } else {

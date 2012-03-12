@@ -237,26 +237,56 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
             </xsl:choose>
             <s:subComponent>
                 <xsl:choose>
+
                   <!-- This is a BBa feature -->
                   <xsl:when test="starts-with(title,'BBa_')">
-                    <xsl:param name="bba_title" select="substring-before(title,' ')"/>
+
                     <xsl:choose>
-                     <!-- There is a subpart with the same BBa_ as this feature -->
-                     <xsl:when test="key('parts',$bba_title)">
-                       <s:DnaComponent rdf:about="{concat($prp,$bba_title)}">
-                       <xsl:apply-templates select="type" mode="so"/>
-                       <xsl:apply-templates select="type" mode="non-so"/>
-                       </s:DnaComponent>
-                     </xsl:when>
-                     <!-- This BBa_ feature is a part, not listed as subpart -->
-                     <xsl:when test="not(key('parts',$bba_title))">
-                       <xsl:call-template name="DC">
-                        <xsl:with-param name="id" select="$bba_title"/>
-                        <xsl:with-param name="type" select="type"/>
-                      </xsl:call-template>
-                     </xsl:when>
+                      <!-- The BBa_ has a trailing space -->
+                      <xsl:when test="substring-before(title,' ')">
+                        <xsl:param name="bba_title" select="substring-before(title,' ')"/>
+                         <xsl:choose>
+                           <!-- There is a subpart with the same BBa_ as this feature, and it has a trailing space -->
+                           <xsl:when test="key('parts',$bba_title)">
+                             <s:DnaComponent rdf:about="{concat($prp,$bba_title)}">
+                             <xsl:apply-templates select="type" mode="so"/>
+                             <xsl:apply-templates select="type" mode="non-so"/>
+                             </s:DnaComponent>
+                           </xsl:when>
+                           <!-- This BBa_ feature is a part, not listed as subpart, and it has a trailing space -->
+                           <xsl:when test="not(key('parts',$bba_title))">
+                             <xsl:call-template name="DC">
+                              <xsl:with-param name="id" select="$bba_title"/>
+                              <xsl:with-param name="type" select="type"/>
+                            </xsl:call-template>
+                           </xsl:when>
+                          </xsl:choose>
+                        </xsl:when>
+
+                        <!-- The BBa_ does NOT have a trailing space -->
+                        <xsl:otherwise>
+                          <xsl:param name="bba_title" select="title"/>
+                          <!-- There is a subpart with the same BBa_ as this feature -->
+                          <xsl:choose>
+                          <xsl:when test="key('parts',$bba_title)">
+                            <s:DnaComponent rdf:about="{concat($prp,$bba_title)}">
+                            <xsl:apply-templates select="type" mode="so"/>
+                            <xsl:apply-templates select="type" mode="non-so"/>
+                            </s:DnaComponent>
+                          </xsl:when>
+                           
+                          <!-- This BBa_ feature is a part, not listed as subpart -->
+                          <xsl:when test="not(key('parts',$bba_title))">
+                            <xsl:call-template name="DC">
+                             <xsl:with-param name="id" select="$bba_title"/>
+                             <xsl:with-param name="type" select="type"/>
+                            </xsl:call-template>
+                          </xsl:when>
+                          </xsl:choose>
+                        </xsl:otherwise>
                    </xsl:choose>
                   </xsl:when>
+
                   <!-- This feature is not a part -->
                   <xsl:otherwise>
                      <s:DnaComponent rdf:about="{concat($prf,concat($prefix,id))}">

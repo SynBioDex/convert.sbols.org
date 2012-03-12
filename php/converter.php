@@ -1,7 +1,8 @@
-#!/usr/bin/php
+<?php header('Content-Type: text/xml'); ?>
 <?php 
-/**<?php header('Content-Type: text/xml'); ?>*/
+//header('Content-Type: text/html');
 /**
+#!/usr/bin/php
 Copyright 2012 Michal Galdzicki
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,20 +26,29 @@ Copyright 2012 Michal Galdzicki
  * @param  $xsl 
  * @return string xml 
  */ 
-function transform($xml, $xsl) { 
-   $xsl_doc = new DomDocument;
-   $xsl_doc->load($xsl); 
-   $xml_doc = new DomDocument;
-   $xml_doc->load($xml); 
-
-   $xslt = new XSLTProcessor(); 
-   $xslt->importStylesheet($xsl_doc); 
-   
-   if ($out = $xslt->transformToXML($xml_doc)) {
-      return $out;
-  } else {
-      trigger_error('XSL transformation failed.', E_USER_ERROR);
-  } // if 
+function transform($xml_file, $xsl_file) { 
+    $xalan_path = "/usr/bin/xalan";
+    $xalan_error="/tmp/xalan/xalan_error_".rand();
+    $xalan_cmd = $xalan_path." "."-in ".$xml_file." -xsl ".$xsl_file." -indent 1 2> ".$xalan_error;
+    exec($xalan_cmd,$out,$status);
+    $sout = "";
+    //echo "status ".$status."\n";
+    if (count($out)>0){
+        foreach($out as $line){
+            $sout.=$line."\n";
+        }
+    }else{
+        //if(filesize($xalan_error)>1){
+            $f=fopen($xalan_error,"r");
+            $error=fread($f, filesize($xalan_error));
+            fclose($f);
+            $sout = "XALAN ERROR: ".$error;
+        //}else{
+            //$sout = "No output and no error\n";
+        //}
+    }
+    return $sout;
+    //return $xalan_cmd;
 } 
 function clean($elem) 
 { 

@@ -26,6 +26,7 @@ function transform($xml_file, $xsl_file) {
     $xalan_path = "/usr/bin/xalan";
     $xalan_error="/tmp/xalan/xalan_error_".rand();
     $xalan_cmd = $xalan_path." "."-in ".$xml_file." -xsl ".$xsl_file." -indent 1 2> ".$xalan_error;
+    //echo $xalan_cmd;
     exec($xalan_cmd,$out,$status);
     $sout = "";
     //echo "status ".$status."\n";
@@ -58,21 +59,18 @@ function clean($elem)
 } 
 function if_http($argv)
 {
-    if(empty($_SERVER["REQUEST_URI"])) {
-        echo "Not a server request\n"; 
+    if ($_GET['part']) {
+        $part_id = $_GET['part'];
     } else {
-        if ($_GET['part']) {
-            $part_id = $_GET['part'];
-        } else {
-            $expl = explode("/",$_SERVER["REQUEST_URI"]);
-            $host = $_SERVER["SERVER_NAME"];
-            $part_id = $expl[count($expl)-1];
-        }
-        $clean_part_id = clean($part_id);
-        //$x = transform($part.".xml","sbol_biobrick.xsl");
-        $x = transform("http://partsregistry.org/xml/part.".$clean_part_id,"http://".$host."/xslt/sbol_biobrick.xsl");
-        print $x;
+        $expl = explode("/",$_SERVER["REQUEST_URI"]);
+        $host = $_SERVER["SERVER_NAME"];
+        $part_id = $expl[count($expl)-1];
     }
+    $clean_part_id = clean($part_id);
+    //$x = transform($part.".xml","sbol_biobrick.xsl");
+    //$x = transform("http://partsregistry.org/xml/part.".$clean_part_id,"http://".$host."/xslt/sbol_biobrick.xsl");
+    $x = transform("http://partsregistry.org/cgi/xml/part.cgi?part=".$clean_part_id,"http://".$host."/xslt/sbol_biobrick.xsl");
+    print $x;
 }
 
 //MAIN

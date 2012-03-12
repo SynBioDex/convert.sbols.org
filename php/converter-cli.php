@@ -17,5 +17,5 @@ Copyright 2012 Michal Galdzicki
    limitations under the License.
 */
 
-require 'converter.php';
+require 'sbol_local.php';
 ?>

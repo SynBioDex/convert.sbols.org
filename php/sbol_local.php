@@ -1,8 +1,6 @@
 <?php header('Content-Type: text/xml'); ?>
 <?php 
-//header('Content-Type: text/html');
 /**
-#!/usr/bin/php
 Copyright 2012 Michal Galdzicki
 
    Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +17,6 @@ Copyright 2012 Michal Galdzicki
    limitations under the License.
 */
 
-//to trigger download use the following line:
-//header('Content-Disposition: attachment; filename="example.xml"'); 
 /** 
  * @param  $xml 
  * @param  $xsl 
@@ -104,6 +100,7 @@ function if_http($argv)
         print $x;
 }
 
+//MAIN
 if(empty($_SERVER["REQUEST_URI"])) {
         if (PHP_SAPI === 'cli'){
            $opt = parseArgs($argv); 

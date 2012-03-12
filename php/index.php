@@ -17,28 +17,36 @@ Copyright 2012 Michal Galdzicki
    limitations under the License.
 */
 
-//to trigger download use the following line:
-//header('Content-Disposition: attachment; filename="example.xml"'); 
 /** 
  * @param  $xml 
  * @param  $xsl 
  * @return string xml 
  */ 
-function transform($xml, $xsl) { 
-   $xsl_doc = new DomDocument;
-   $xsl_doc->load($xsl); 
-   $xml_doc = new DomDocument;
-   $xml_doc->load($xml); 
+function transform($xml_file, $xsl_file) {
+    $xalan_path = "/usr/bin/xalan";
+    $xalan_error="/tmp/xalan/xalan_error_".rand();
+    $xalan_cmd = $xalan_path." "."-in ".$xml_file." -xsl ".$xsl_file." -indent 1 2> ".$xalan_error;
+    exec($xalan_cmd,$out,$status);
+    $sout = "";
+    //echo "status ".$status."\n";
+    if (count($out)>0){
+        foreach($out as $line){
+            $sout.=$line."\n";
+        }
+    }else{
+        //if(filesize($xalan_error)>1){
+            $f=fopen($xalan_error,"r");
+            $error=fread($f, filesize($xalan_error));
+            fclose($f);
+            $sout = "XALAN ERROR: ".$error;
+        //}else{
+            //$sout = "No output and no error\n";
+        //}
+    }
+    return $sout;
+    //return $xalan_cmd;
+}
 
-   $xslt = new XSLTProcessor(); 
-   $xslt->importStylesheet($xsl_doc); 
-   
-   if ($out = $xslt->transformToXML($xml_doc)) {
-      return $out;
-  } else {
-      trigger_error('XSL transformation failed.', E_USER_ERROR);
-  } // if 
-} 
 function clean($elem) 
 { 
     if(!is_array($elem)) 
@@ -48,7 +56,7 @@ function clean($elem)
             $elem[$key] = clean($value); 
     return $elem; 
 } 
-function ifget()
+function if_http($argv)
 {
     if(empty($_SERVER["REQUEST_URI"])) {
         echo "Not a server request\n"; 
@@ -67,7 +75,11 @@ function ifget()
     }
 }
 
-ifget();
-
+//MAIN
+if(empty($_SERVER["REQUEST_URI"])) {
+        echo "Not a Server Request, try the local cli";
+    } else {
+        if_http();
+    }
 
 ?>

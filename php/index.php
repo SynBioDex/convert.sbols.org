@@ -58,6 +58,7 @@ function clean($elem)
     return $elem; 
 } 
 function if_http($argv)
+//what is the $argv for?
 {
     if ($_GET['part']) {
         $part_id = $_GET['part'];

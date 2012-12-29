@@ -91,9 +91,9 @@ function if_http($argv)
             $part_id = $_GET['part'];
         } else {
             $expl = explode("/",$_SERVER["REQUEST_URI"]);
-            $host = $_SERVER["SERVER_NAME"];
             $part_id = $expl[count($expl)-1];
         }
+        $host = $_SERVER["SERVER_NAME"];
         $clean_part_id = clean($part_id);
         //$x = transform($part.".xml","sbol_biobrick.xsl");
         $x = transform("http://".$host."/mit/xml/".$clean_part_id.".xml","http://".$host."/xslt/sbol_biobrick.xsl");

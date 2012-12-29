@@ -1,0 +1,65 @@
+#!/bin/bash
+#clean_tests.sh
+
+replace (){
+local infile=$1
+local outfile=$2
+local exp1=$3
+local exp2=$4
+#echo "exp2:"$exp2" exp1:"$exp1"|"
+      sed -e "s/$exp1/$exp2/" $infile> $outfile
+#echo "sed -e \"s/$exp1//\" $infile> $outfile"
+}
+
+replacethese (){
+local infile=$1
+local outfile=$2
+local tmpfile=/tmp/clean_tests_tmp
+
+nsexp[0]="xmlns:rdfs=\"http:\/\/www.w3.org\/2000\/01\/rdf-schema#\""
+nsexp[2]="xmlns:map=\"http:\/\/convert.sbols.org\/xml\/\""
+nsexp[3]="xmlns:pr=\"http:\/\/partsregistry.org\/\""
+nsexp[4]="xmlns:prt=\"http:\/\/partsregistry.org\/type\/\""
+nsexp[5]="xmlns:prp=\"http:\/\/partsregistry.org\/part\/\""
+nsexp[6]="xmlns:pra=\"http:\/\/partsregistry.org\/anot\/\""
+nsexp[7]="xmlns:prs=\"http:\/\/partsregistry.org\/seq\/\""
+nsexp[8]="xmlns:prf=\"http:\/\/partsregistry.org\/feat\/\""
+nsexp[9]="xmlns:xsi=\"http:\/\/www.w3.org\/2001\/XMLSchema-instance\""
+
+declarationexps="encoding=\"UTF-8\""
+newdeclaration[0]="encoding=\"UTF-8\" standalone=\"yes\""
+
+for oneexp in ${nsexp[@]}
+do
+  replace $infile $tmpfile " $oneexp" ""
+  cp $tmpfile $outfile
+  infile=$outfile
+done
+
+replace $infile $tmpfile "$declarationexps" "${newdeclaration[0]}"
+cp $tmpfile $outfile
+cat $outfile
+rm $tmpfile
+}
+
+infiles="basic/Valid_BasicPartTest.sbol.xml"
+#basic/Valid_MultiSOTypesTest.sbol.xml
+#basic/Valid_NicknameTest.sbol.xml
+#basic/Valid_SequenceTest.sbol.xml
+#basic/Valid_SOTypeTest.sbol.xml
+#extendsSbol/ValidCustomElementExtenedPartTest.sbol.xml
+#subparts/Valid_DeepSubpartTest.sbol.xml
+#subparts/Valid_MultiDeepSubpartsTest.sbol.xml
+#subparts/Valid_SpecifiedSubcarsTest.sbol.xml
+#subparts/Valid_SpecifiedSubpartsSubscarsTest.sbol.xml
+#subparts/Valid_SpecifiedSubpartsTest.sbol.xml"
+
+#outfiles=$infiles
+
+for inf in $infiles
+do
+  #i++
+  echo $inf
+  replacethese $inf $inf
+  #replacethese $nfile $outfile[$i]
+done

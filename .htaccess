@@ -1,3 +1,16 @@
+# INTERCEPT SITEMAP XML FILE
+RewriteEngine On
+#RewriteBase /
+RewriteBase /php/
+#RewriteCond %{HTTP_HOST} ^(.*)sbols.org$ [L]
+
+#http://dev.convert.sbols.org/sbol_local.php?part=BBa_T9002
+RewriteRule ^sbol_local.php$ trackSitemap.php [QSA,L]
+
+#http://dev.convert.sbols.org/sbol_local/BBa_T9002
+#doesnt work
+#RewriteCond %{REQUEST_URI} ^sbol_local$ [L]
+RewriteRule (.*) trackSitemap2.php [QSA]
 <FilesMatch "^biobrick$">
     ForceType application/x-httpd-php
 </FilesMatch>

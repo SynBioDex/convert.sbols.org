@@ -9,3 +9,5 @@
 ./sbol_local-cli.php subparts/Valid_SpecifiedSubcarsTest.xml > subparts/Valid_SpecifiedSubcarsTest.sbol.xml
 ./sbol_local-cli.php subparts/Valid_SpecifiedSubpartsSubscarsTest.xml > subparts/Valid_SpecifiedSubpartsSubscarsTest.sbol.xml
 ./sbol_local-cli.php subparts/Valid_SpecifiedSubpartsTest.xml > subparts/Valid_SpecifiedSubpartsTest.sbol.xml
+./sbol_local-cli.php basic/Valid_NonSOTypesTest.xml > basic/Valid_NonSOTypesTest.sbol.xml
+./sbol_local-cli.php basic/Valid_IdTest.xml > basic/Valid_IdTest.sbol.xml

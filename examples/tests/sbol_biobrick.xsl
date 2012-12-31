@@ -58,7 +58,7 @@ xmlns:prd="http://partsregistry.org/cgi/xml/part.cgi?part="
   <entry><rsbpml>conserved</rsbpml><so>SO_0000856</so></entry>
   <entry><rsbpml>polya</rsbpml><so>SO_0000553</so></entry>
   <entry><rsbpml>promoter</rsbpml><so>SO_0000167</so></entry>
-  <entry><rsbpml>rbs</rsbpml><so>SO_0000552</so></entry>
+  <entry><rsbpml>rbs</rsbpml><so>SO_0000139</so></entry>
   <entry><rsbpml>regulatory</rsbpml><so>SO_0005836</so></entry>
   <entry><rsbpml>s_mutation</rsbpml><so>SO_0001017</so></entry>
   <entry><rsbpml>stem_loop</rsbpml><so>SO_0000313</so></entry>

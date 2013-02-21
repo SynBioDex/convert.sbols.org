@@ -1,4 +1,0 @@
-rm evren_test_result
-rm test_xsd_result
-touch evren_test_result
-touch test_xsd_result

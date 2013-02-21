@@ -16,7 +16,8 @@ local infile=$1
 local outfile=$2
 local tmpfile=/tmp/clean_tests_tmp
 
-nsexp[0]="xmlns:rdfs=\"http:\/\/www.w3.org\/2000\/01\/rdf-schema#\""
+#to remove
+#nsexp[0]="xmlns:rdfs=\"http:\/\/www.w3.org\/2000\/01\/rdf-schema#\""
 nsexp[2]="xmlns:map=\"http:\/\/convert.sbols.org\/xml\/\""
 nsexp[3]="xmlns:pr=\"http:\/\/partsregistry.org\/\""
 nsexp[4]="xmlns:prt=\"http:\/\/partsregistry.org\/type\/\""
@@ -25,19 +26,38 @@ nsexp[6]="xmlns:pra=\"http:\/\/partsregistry.org\/anot\/\""
 nsexp[7]="xmlns:prs=\"http:\/\/partsregistry.org\/seq\/\""
 nsexp[8]="xmlns:prf=\"http:\/\/partsregistry.org\/feat\/\""
 nsexp[9]="xmlns:xsi=\"http:\/\/www.w3.org\/2001\/XMLSchema-instance\""
-
-declarationexps="encoding=\"UTF-8\""
-newdeclaration[0]="encoding=\"UTF-8\" standalone=\"yes\""
-
-for oneexp in ${nsexp[@]}
+for remove in ${nsexp[@]}
 do
-  replace $infile $tmpfile " $oneexp" ""
+  replace $infile $tmpfile " $remove" ""
   cp $tmpfile $outfile
   infile=$outfile
 done
 
-replace $infile $tmpfile "$declarationexps" "${newdeclaration[0]}"
+#to newline
+lineNS[0]="xmlns:s=\"http:\/\/sbols.org\/v1#\""
+lineNS[1]="xmlns:rdf=\"http:\/\/www.w3.org\/1999\/02\/22-rdf-syntax-ns#\""
+lineNS[2]="xmlns:xsd=\"http:\/\/www.w3.org\/2001\/XMLSchema#\""
+lineNS[3]="xmlns:so=\"http:\/\/purl.obolibrary.org\/obo\/\""
+#lineNS[4]="xmlns:rdfs=\"http:\/\/www.w3.org\/2000\/01\/rdf-schema#\""
+
+for oneexp in ${lineNS[@]}
+do
+  replace $infile $tmpfile " $oneexp" "  $oneexp\n"
+  cp $tmpfile $outfile
+  infile=$outfile
+done
+
+rdfexps="<rdf:RDF"
+rdfEOL[0]="<rdf:RDF\n"
+replace $infile $tmpfile "$rdfexps" "${rdfEOL[0]}"
 cp $tmpfile $outfile
+
+#declarationexps="encoding=\"UTF-8\""
+#newdeclaration[0]="encoding=\"UTF-8\" standalone=\"yes\""
+
+#replace $infile $tmpfile "$declarationexps" "${newdeclaration[0]}"
+#replace $infile $tmpfile "" "${newdeclaration[0]}"
+#cp $tmpfile $outfile
 cat $outfile
 rm $tmpfile
 }

@@ -1,0 +1,2 @@
+mv prepxml_error.log last_prepxml_error.log
+rm xml_preped/*

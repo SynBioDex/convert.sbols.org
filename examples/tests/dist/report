@@ -1,0 +1,1 @@
+wc -l processed.log; wc -l stderr.log; ls -1 rdf/* |wc -l; echo rdf/

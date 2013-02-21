@@ -1,0 +1,3 @@
+mv stderr.log last_stderr.log
+mv processed.log last_processed.log
+rm rdf/*

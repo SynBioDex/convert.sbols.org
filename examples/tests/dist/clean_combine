@@ -1,0 +1,2 @@
+mv combine_to_rdf_error last_combine_to_rdf_error
+mv 20.*_SBPkb.rdf last_SBPkb.rdf

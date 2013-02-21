@@ -1,0 +1,2 @@
+mv validate.log last_validate.log
+#mv validated.log last_validated.log
